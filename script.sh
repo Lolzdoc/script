@@ -19,7 +19,7 @@ openssl req -new -config openssl-ca.cnf -key CA.key -out CA.csr
 openssl x509 -req -days 365 -in CA.csr -signkey CA.key -out CA.crt
 
 #2
-keytool -import -file CA.crt -keystore clienttruststore
+keytool -import -file CA.crt -keystore clienttruststore -alias CA
 
 
 #clientcertificat
@@ -33,8 +33,8 @@ keytool -certreq -alias client -keystore clientkeystore -file clientcert.csr
 openssl x509 -req -in clientcert.csr -CA CA.crt -CAkey CA.key -CAcreateserial -out client.crt
 
 #6
-keytool -import -trustcacerts -file CA.crt
-keytool -import -file client.crt -keystore clientkeystore
+keytool -import -trustcacerts -file CA.crt -keystore clientkeystore -alias CAserver
+keytool -import -file client.crt -keystore clientkeystore -alias client
 
 #7
 keytool -list -v -keystore clienttruststore
@@ -42,6 +42,4 @@ echo "Här ska det var en"
 
 keytool -list -v -keystore clientkeystore
 echo "Här ska det var två"
-
-
 
