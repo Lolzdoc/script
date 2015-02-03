@@ -33,6 +33,7 @@ keytool -certreq -alias client -keystore clientkeystore -file clientcert.csr
 openssl x509 -req -in clientcert.csr -CA CA.crt -CAkey CA.key -CAcreateserial -out client.crt
 
 #6
+keytool -import -trustcacerts -file CA.crt
 keytool -import -file client.crt -keystore clientkeystore
 
 #7
