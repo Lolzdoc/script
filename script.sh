@@ -3,59 +3,44 @@
 clear
 
 
-#openssl genrsa -des3 -passout pass:x -out CA.pass.key 2048
-#openssl rsa -passin pass:x -in CA.pass.key -out CA.key
-#rm CA.pass.key
-
-#rm *.crt
-#rm *.csr
-#rm *store
+rm *.crt
+rm *.csr
+rm *store
 rm *.key
 rm *.old
 
+#penssl genrsa -des3 -passout pass:x -out CA.pass.key 2048
+#openssl rsa -passin pass:x -in CA.pass.key -out CA.key
+#rm CA.pass.key
+
 #1
 openssl genrsa -out CA.key 2048
+openssl req -new -config openssl-ca.cnf -key CA.key -out CA.csr
+openssl x509 -req -days 365 -in CA.csr -signkey CA.key -out CA.crt
+
 #2
-#openssl req -new -config openssl-ca.cnf -key CA.key -out CA.csr
-#3
-#openssl x509 -req -days 365 -in CA.csr -signkey CA.key -out CA.crt
-#4
-#keytool -import -file CA.crt -keystore clienttruststore
+keytool -import -file CA.crt -keystore clienttruststore
 
 
 #clientcertificat
+#3
+keytool -genkey -alias client  -keyalg RSA -keystore clientkeystore -keysize 2048
+#4
+keytool -certreq -alias client -keystore clientkeystore -file clientcert.csr
+
+
 #5
-#keytool -genkey -alias client  -keyalg RSA -keystore clientkeystore -keysize 2048
+openssl x509 -req -in clientcert.csr -CA CA.crt -CAkey CA.key -CAcreateserial -out client.crt
 
-#keytool -certreq -alias client -keystore clientkeystore -file clientcert.csr
+#6
+keytool -import -file client.crt -keystore clientkeystore
 
-openssl rsa -in CA.key -out newCA.pem
+#7
+keytool -list -v -keystore clienttruststore
+echo "Här ska det var en"
 
-openssl x509 -req -in clientcert.csr -CAkey newCA.pem -out client.crt
-
-#keytool -import -file client.crt -keystore clientkeystore
-
-
-
-
-
-#keytool -certreq -alias Dat12hri -keystore clientkeystore -file mydomain.csr
-
-
-#openssl genrsa -des3 -passout pass:x -out client.pass.key 2048
-
-#openssl rsa -passin pass:x -in client.pass.key -out client.key
-
-#rm client.pass.key
-
-#openssl req -new -config openssl-client.cnf -key client.key -out client.csr
-#echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTT"
-#touch index.txt
-#echo '01' > serial.txt
-#openssl ca -config openssl-ca.cnf -policy signing_policy -extensions signing_req -in client.csr -cert CA.crt -out client.crt
-
-
-#keytool -import -file client.crt -keystore clientkeystore
+keytool -list -v -keystore clientkeystore
+echo "Här ska det var två"
 
 
 
